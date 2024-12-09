@@ -1,0 +1,281 @@
+/* src/MainPage.css */
+
+/* :root 변수 설정 */
+:root {
+  /* 색상 변수 */
+  --color-dark-main: #181818;
+  --color-dark-secondary: #282828;
+  --color-dark-light: #313133;
+  --color-primary-main: #FFA726;
+  --color-primary-dark: #F57C00;
+  --color-text-light: #EDEDED;
+  --color-text-dark: #A5A5A5;
+
+  /* 폰트 변수 */
+  --font-family: 'Pretendard', sans-serif;
+  --font-size-base: 20px;
+  --font-weight-bold: 600;
+  --font-weight-medium: 500;
+
+  /* 기타 변수 */
+  --border-radius: 2.45px;
+  --padding-base: 10px 20px;
+  --gap-base: 10px;
+  /*  */
+}
+
+/* 공통 레이아웃 */
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 40px;
+  gap: 35px;
+  background: var(--color-dark-secondary);
+  border-radius: 10px;
+  width: 1192px;
+  height: 997px;
+  box-sizing: border-box;
+}
+
+/* 제목 및 내비게이션 */
+.title-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.title {
+  font-family: var(--font-family);
+  font-style: normal;
+  font-weight: var(--font-weight-bold);
+  font-size: 42px;
+  line-height: 50px;
+  text-align: right;
+  color: var(--color-text-light);
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 24px;
+}
+
+/* 버튼 스타일 */
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  gap: 12px;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-bold);
+  font-size: 13px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.button--primary {
+  background: var(--color-primary-main);
+  color: var(--color-text-light);
+}
+
+.button--primary:hover {
+  background: var(--color-primary-dark);
+  color: #ffffff;
+}
+
+.button--disabled {
+  background: var(--color-dark-secondary);
+  color: var(--color-dark-main);
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 캘린더 섹션 */
+.calendar-section {
+  width: 100%;
+}
+
+/* 요일 헤더 */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-dark-light);
+  border-radius: var(--border-radius);
+  padding: 10px 0;
+}
+
+.calendar-header-cell {
+  flex: 1;
+  text-align: center;
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-bold);
+  font-size: 20px;
+  color: var(--color-text-light);
+}
+
+/* 캘린더 그리드 */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-top: 10px;
+}
+
+/* 개별 캘린더 셀 */
+.calendar-cell {
+  background: var(--color-dark-light);
+  border-radius: var(--border-radius);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  height: 100px;
+  box-sizing: border-box;
+}
+
+.calendar-cell.empty {
+  background: transparent;
+}
+
+/* 요일별 스타일 */
+.calendar-cell.sunday {
+  border-left: 2px solid var(--color-primary-dark);
+}
+
+.calendar-cell.saturday {
+  border-right: 2px solid var(--color-primary-dark);
+}
+
+/* 오늘 날짜 하이라이트 */
+.calendar-cell.today {
+  background: var(--color-primary-main);
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 10px rgba(255, 167, 38, 0.5);
+}
+
+/* 날짜 번호 스타일 */
+.date-number {
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-bold);
+  font-size: 20px;
+  color: var(--color-text-light);
+}
+
+/* 이벤트 스타일 (추가 기능) */
+.events {
+  margin-top: 5px;
+  width: 100%;
+}
+
+.event {
+  background: var(--color-primary-dark);
+  color: #ffffff;
+  padding: 2px 4px;
+  border-radius: 2px;
+  font-size: 12px;
+  margin-bottom: 2px;
+  text-align: center;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1200px) {
+  .main-layout {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .calendar-grid {
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+  }
+
+  .calendar-cell {
+    height: 80px;
+    padding: 8px;
+  }
+
+  .title {
+    font-size: 32px;
+    line-height: 40px;
+  }
+
+  .button {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .calendar-header-cell {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .calendar-grid {
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+
+  .calendar-cell {
+    height: 60px;
+    padding: 6px;
+  }
+
+  .title {
+    font-size: 24px;
+    line-height: 30px;
+  }
+
+  .button {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  .calendar-header-cell {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-layout {
+    padding: 10px;
+    gap: 20px;
+  }
+
+  .title {
+    font-size: 20px;
+    line-height: 24px;
+  }
+
+  .button {
+    padding: 3px 6px;
+    font-size: 10px;
+  }
+
+  .calendar-header {
+    padding: 5px 0;
+  }
+
+  .calendar-header-cell {
+    font-size: 12px;
+  }
+
+  .calendar-cell {
+    height: 50px;
+    padding: 5px;
+  }
+
+  .date-number {
+    font-size: 16px;
+  }
+
+  .events .event {
+    font-size: 10px;
+  }
+}

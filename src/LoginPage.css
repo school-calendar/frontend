@@ -1,0 +1,117 @@
+/* Pretendard 폰트 불러오기 */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+/* CSS 변수 정의 */
+:root {
+  --primary-dark: #F57C00; /* 주요 색상 */
+  --button-background: #212121; /* 버튼 배경색 */
+  --button-hover-background: #333333; /* 버튼 호버 배경색 */
+  --subtitle-color: #CACACA; /* 서브타이틀 색상 */
+}
+
+/* 컨테이너 스타일 */
+.container {
+  background-color: #121212;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* 헤더 스타일 */
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  color: #FFFFFF;
+  padding: 10px 20px;
+  font-size: 1.5rem;
+  text-align: left;
+  border-bottom: 1px solid #333;
+}
+
+/* 메인 스타일 */
+.main {
+  text-align: center;
+  color: #FFFFFF;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 콘텐츠 래퍼 스타일 */
+.content {
+  display: flex;
+  width: 32rem;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* 제목 스타일 */
+/* 제목 스타일 */
+.title {
+    color: var(--primary-dark);
+    font-family: 'Pretendard', sans-serif;
+    font-size: 5rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    margin-bottom: 1rem;
+    white-space: nowrap; /* 텍스트를 한 줄로 강제 */
+  }
+  
+
+/* 서브타이틀 스타일 */
+.subtitle {
+  align-self: stretch;
+  color: var(--subtitle-color);
+  text-align: center;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 1.61419rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  margin-bottom: 2.5rem;
+}
+
+/* 버튼 스타일 */
+.button {
+  display: flex;
+  width: 10rem;
+  height: 2.5rem;
+  padding: 1.75rem 1.75rem;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 0.25rem;
+  background: var(--button-background);
+  color: var(--primary-dark);
+  font-size: 1.2rem;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-style: normal;
+  line-height: normal;
+  margin-top: 3rem; /* 버튼 위에 추가 간격 */
+}
+
+/* 새로운 네모난 영역 스타일 */
+
+  
+
+/* 버튼 호버 스타일 */
+
+
+
