@@ -1,7 +1,7 @@
 // src/MainPage.jsx
 
 import React, { useState } from "react";
-import "./MainPage.css"; // 캘린더 전용 CSS
+import "./style/MainPage.css"; // 캘린더 전용 CSS
 
 const MainPage = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
