@@ -32,7 +32,7 @@
   padding: 40px;
   gap: 35px;
   background: var(--color-dark-secondary);
-  border-radius: 10px;
+  /* border-radius: 10px; */
   width: 1192px;
   height: 997px;
   box-sizing: border-box;
