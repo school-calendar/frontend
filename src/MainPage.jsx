@@ -105,35 +105,40 @@ const MainPage = () => {
   ];
 
   return (
-    <div className="main-layout">
-      <div className="title-nav">
-        <div className="title">
-          {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
+    <>
+      <div className="main-layout">
+        <div className="title-nav">
+          <div className="title">
+            {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
+          </div>
+          <div className="nav-buttons">
+            <button className="button button--primary" onClick={goToPreviousMonth}>
+              이전
+            </button>
+            <button className="button button--primary" onClick={goToNextMonth}>
+              다음
+            </button>
+          </div>
         </div>
-        <div className="nav-buttons">
-          <button className="button button--primary" onClick={goToPreviousMonth}>
-            이전
-          </button>
-          <button className="button button--primary" onClick={goToNextMonth}>
-            다음
-          </button>
+        <div className="calendar-section">
+          <div className="calendar-header">
+            {weekDays.map((day, index) => (
+              <div
+                key={index}
+                className={`calendar-header-cell ${day.className}`}
+                aria-label={day.name}
+              >
+                {day.name}
+              </div>
+            ))}
+          </div>
+          <div className="calendar-grid">{renderCalendar()}</div>
         </div>
       </div>
-      <div className="calendar-section">
-        <div className="calendar-header">
-          {weekDays.map((day, index) => (
-            <div
-              key={index}
-              className={`calendar-header-cell ${day.className}`}
-              aria-label={day.name}
-            >
-              {day.name}
-            </div>
-          ))}
-        </div>
-        <div className="calendar-grid">{renderCalendar()}</div>
+      <div>
+        
       </div>
-    </div>
+    </>
   );
 };
 
