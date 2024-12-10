@@ -3,23 +3,34 @@ import { useNavigate } from "react-router-dom";
 import "./style/LoginPage.css";
 
 function LoginPage() {
-  const navigate = useNavigate();
-
-  const handleStart = () => {
-    navigate("/main");
-  };
+  const navigate = useNavigate(); // useNavigate 훅 추가
 
   return (
-    <div className="container">
-      <main className="main">
-        <div className="content">
-          <h1 className="title">School Calendar</h1>
-          <p className="subtitle">학사일정과 수행평가 관리를 도와주는 캘린더</p>
-          <button className="button" onClick={handleStart}>
-            시작하기
-          </button>
-        </div>
-      </main>
+    <div className="login-page">
+      <div className="form-container">
+        <h1 className="welcome-text">Welcome!</h1>
+        <p className="signin-text">Sign In</p>
+        <form className="login-form">
+          <input type="text" placeholder="Id" className="input-field" />
+          <input type="password" placeholder="Password" className="input-field" />
+          <div className="button-container">
+            <button
+              type="button"
+              className="signin-button"
+              onClick={() => navigate("/main")} // 버튼 클릭 시 SignInPage로 이동
+            >
+              sign in
+            </button>
+            <button
+              type="button"
+              className="signup-button"
+              onClick={() => navigate("/signup")} // 버튼 클릭 시 MainPage로 이동
+            >
+              sign up
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

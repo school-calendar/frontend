@@ -1,0 +1,117 @@
+/* 전체 화면 설정 */
+.signin-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    background-color: #1c1c1c; /* 검은색 배경 */
+    color: var(--primary-dark); /* 텍스트 기본 색상 */
+  }
+  
+  /* 폼 컨테이너 */
+  .form-container {
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+    padding: 30px; /* 내부 여백 */
+  }
+  
+  /* 헤더 스타일 */
+  .signin-header {
+    font-size: 3.5rem;
+    color: var(--primary-dark);
+    margin-bottom: 30px;
+  }
+  
+  /* 로그인 폼 스타일 */
+  .signin-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px; /* 필드 간 간격 */
+  }
+  
+  /* 입력 컨테이너 */
+  .input-container {
+    position: relative;
+    width: 100%;
+  }
+  
+  /* 입력 필드 스타일 */
+  .input-field {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.5rem; /* 더 큰 폰트 크기 */
+    border: none;
+    border-bottom: 2px solid #4a4a4a;
+    background: transparent;
+    color: #ffffff;
+  }
+  
+  .input-field:focus {
+    outline: none;
+    border-bottom: 2px solid var(--primary-dark);
+  }
+  
+  /* 입력 필드 위 라벨 스타일 */
+  .input-label {
+    position: absolute;
+    left: 15px;
+    top: 15px;
+    font-size: 1.5rem;
+    color: #828282;
+    pointer-events: none;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .input-field:focus + .input-label,
+  .input-field:not(:placeholder-shown) + .input-label {
+    transform: translateY(-20px);
+    font-size: 1rem;
+    color: var(--primary-dark);
+  }
+  
+  /* 버튼 컨테이너 */
+  .button-container {
+    padding-top: 50px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 20px; /* 버튼 사이 간격 */
+  }
+  
+  /* 공통 버튼 스타일 */
+  button {
+    flex: 1;
+    padding: 13px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  /* sign in 버튼 스타일 */
+  .signin-button {
+    background-color: var(--primary-dark);
+    color: #000000;
+    transition: background-color 0.3s;
+  }
+  
+  .signin-button:hover {
+    background-color: #e68a00;
+  }
+  
+  /* sign up 버튼 스타일 */
+  .signup-button {
+    background-color: transparent;
+    border: 2px solid var(--primary-dark);
+    color: var(--primary-dark);
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .signup-button:hover {
+    background-color: var(--primary-dark);
+    color: #ffffff;
+  }
+  

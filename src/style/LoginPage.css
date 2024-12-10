@@ -1,117 +1,123 @@
-/* Pretendard 폰트 불러오기 */
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-
-/* CSS 변수 정의 */
-:root {
-  --primary-dark: #F57C00; /* 주요 색상 */
-  --button-background: #212121; /* 버튼 배경색 */
-  --button-hover-background: #333333; /* 버튼 호버 배경색 */
-  --subtitle-color: #CACACA; /* 서브타이틀 색상 */
-}
-
-/* 컨테이너 스타일 */
-.container {
-  background-color: #121212;
+/* 전체 화면 설정 */
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100vh;
   width: 100vw;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
-/* 헤더 스타일 */
-.header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  color: #FFFFFF;
-  padding: 10px 20px;
-  font-size: 1.5rem;
-  text-align: left;
-  border-bottom: 1px solid #333;
-}
-
-/* 메인 스타일 */
-.main {
-  text-align: center;
-  color: #FFFFFF;
-  width: 100%;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-/* 콘텐츠 래퍼 스타일 */
-.content {
-  display: flex;
-  width: 32rem;
-  flex-direction: column;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-/* 제목 스타일 */
-/* 제목 스타일 */
-.title {
-    color: var(--primary-dark);
-    font-family: 'Pretendard', sans-serif;
-    font-size: 5rem;
-    font-style: normal;
-    font-weight: 600;
-    line-height: normal;
-    margin-bottom: 1rem;
-    white-space: nowrap; /* 텍스트를 한 줄로 강제 */
-  }
-  
-
-/* 서브타이틀 스타일 */
-.subtitle {
-  align-self: stretch;
-  color: var(--subtitle-color);
-  text-align: center;
-  font-family: 'Pretendard', sans-serif;
-  font-size: 1.61419rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-  margin-bottom: 2.5rem;
-}
-
-/* 버튼 스타일 */
-.button {
-  display: flex;
-  width: 10rem;
-  height: 2.5rem;
-  padding: 1.75rem 1.75rem;
-  justify-content: center;
-  align-items: center;
-  gap: 0.25rem;
-  border-radius: 0.25rem;
-  background: var(--button-background);
+  background-color: #1c1c1c;
   color: var(--primary-dark);
-  font-size: 1.2rem;
-  font-family: 'Pretendard', sans-serif;
-  font-weight: 600;
+}
+
+/* 폼 컨테이너 */
+.form-container {
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+}
+
+/* "Welcome!" 텍스트 스타일 */
+.welcome-text {
+  font-size: 4rem;
+  color: var(--primary-dark);
+  margin-bottom: 10px;
+}
+
+/* "Sign In" 텍스트 스타일 */
+.signin-text {
+  font-size: 1.3rem;
+  color: #828282;
+  margin-bottom: 60px;
+}
+
+/* 로그인 폼 스타일 */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+/* 입력 컨테이너 스타일 */
+.input-container {
+  position: relative;
+  width: 100%;
+}
+
+/* 입력 필드 스타일 */
+.input-field {
+  width: 100%;
+  padding: 15px;
+  font-size: 1.5rem;
+  border: none;
+  border-bottom: 2px solid #4a4a4a;
+  background: transparent;
+  color: #ffffff;
+}
+
+.input-field:focus {
+  outline: none;
+  border-bottom: 2px solid var(--primary-dark);
+}
+
+.input-field:focus + .input-label,
+.input-field:not(:placeholder-shown) + .input-label {
+  transform: translateY(-20px);
+  font-size: 1rem;
+  color: var(--primary-dark);
+}
+
+/* 라벨 스타일 */
+.input-label {
+  position: absolute;
+  left: 15px;
+  top: 15px;
+  font-size: 1.5rem;
+  color: #828282;
+  pointer-events: none;
+  transition: all 0.3s ease-in-out;
+}
+
+/* 버튼 컨테이너 */
+.button-container {
+  padding-top: 80px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 20px;
+}
+
+/* 공통 버튼 스타일 */
+button {
+  flex: 1;
+  padding: 13px;
+  font-size: 1rem;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-style: normal;
-  line-height: normal;
-  margin-top: 3rem; /* 버튼 위에 추가 간격 */
 }
 
-/* 새로운 네모난 영역 스타일 */
+/* sign in 버튼 스타일 */
+.signin-button {
+  background-color: var(--primary-dark);
+  color: #000000;
+  transition: background-color 0.3s;
+}
 
-  
+.signin-button:hover {
+  background-color: #e68a00;
+}
 
-/* 버튼 호버 스타일 */
+/* sign up 버튼 스타일 */
+.signup-button {
+  background-color: transparent;
+  border: 2px solid var(--primary-dark);
+  color: var(--primary-dark);
+  transition: background-color 0.3s, color 0.3s;
+}
 
-
-
+.signup-button:hover {
+  background-color: var(--primary-dark);
+  color: #ffffff;
+}

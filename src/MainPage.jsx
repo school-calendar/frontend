@@ -1,145 +1,129 @@
-// src/MainPage.jsx
-
 import React, { useState } from "react";
-import "./style/MainPage.css"; // 캘린더 전용 CSS
+import "./style/MainPage.css";
 
-const MainPage = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
+function MainPage() {
+  // 상태 관리
+  const [currentDate, setCurrentDate] = useState(new Date()); // 현재 날짜
 
-  const goToPreviousMonth = () => {
+  // 현재 월의 첫 날과 마지막 날 계산
+  const getCalendarDays = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1); // 해당 월의 첫 날
+    const lastDay = new Date(year, month + 1, 0); // 해당 월의 마지막 날
+
+    // 이전 달 날짜 추가 (시작 요일 계산)
+    const startDayOfWeek = firstDay.getDay();
+    const prevMonthLastDay = new Date(year, month, 0).getDate(); // 이전 달의 마지막 날
+    const prevMonthDays = Array.from(
+      { length: startDayOfWeek },
+      (_, i) => prevMonthLastDay - startDayOfWeek + i + 1
+    );
+
+    // 현재 월 날짜
+    const currentMonthDays = Array.from(
+      { length: lastDay.getDate() },
+      (_, i) => i + 1
+    );
+
+    // 다음 달 날짜 추가
+    const endDayOfWeek = lastDay.getDay();
+    const nextMonthDays = Array.from(
+      { length: 6 - endDayOfWeek },
+      (_, i) => i + 1
+    );
+
+    return {
+      prevMonthDays,
+      currentMonthDays,
+      nextMonthDays,
+    };
+  };
+
+  // 달력 데이터 가져오기
+  const { prevMonthDays, currentMonthDays, nextMonthDays } =
+    getCalendarDays(currentDate);
+
+  // 이전 월로 이동
+  const handlePrevMonth = () => {
     setCurrentDate(
       new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
     );
   };
 
-  const goToNextMonth = () => {
+  // 다음 월로 이동
+  const handleNextMonth = () => {
     setCurrentDate(
       new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
     );
   };
 
-  const renderCalendar = () => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    const firstDay = new Date(year, month, 1).getDay();
-    const lastDate = new Date(year, month + 1, 0).getDate();
-
-    const today = new Date();
-
-    const totalDays = firstDay + lastDate;
-    const totalWeeks = Math.ceil(totalDays / 7);
-
-    const days = [];
-
-    // 빈 셀 추가 (달의 시작 전)
-    for (let i = 0; i < firstDay; i++) {
-      days.push(
-        <div key={`empty-start-${i}`} className="calendar-cell empty"></div>
-      );
-    }
-
-    // 날짜 셀 추가
-    for (let day = 1; day <= lastDate; day++) {
-      const date = new Date(year, month, day);
-      const dayOfWeek = date.getDay(); // 0 (일)부터 6 (토)까지
-      const weekDayNames = [
-        "sunday",
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday",
-        "saturday",
-      ];
-      const dayClass = weekDayNames[dayOfWeek];
-
-      // 현재 날짜가 몇 주에 속하는지 계산
-      const weekNumber = Math.floor((firstDay + day - 1) / 7);
-
-      let weekClass = "";
-      if (weekNumber === 0) {
-        weekClass = "first-week";
-      } else if (weekNumber === totalWeeks - 1) {
-        weekClass = "last-week";
-      }
-
-      // 오늘 날짜인지 확인
-      const isToday =
-        date.getFullYear() === today.getFullYear() &&
-        date.getMonth() === today.getMonth() &&
-        date.getDate() === today.getDate();
-
-      days.push(
-        <div
-          key={day}
-          className={`calendar-cell ${dayClass} ${weekClass} ${
-            isToday ? "today" : ""
-          }`}
-        >
-          <div className="date-number">{day}</div>
-          {/* 이벤트가 있는 경우 아래 div를 추가 */}
-          {/* <div className="event">Event</div> */}
-        </div>
-      );
-    }
-
-    // 빈 셀 추가 (달의 끝 이후)
-    const remainingCells = totalWeeks * 7 - (firstDay + lastDate);
-    for (let i = 0; i < remainingCells; i++) {
-      days.push(
-        <div key={`empty-end-${i}`} className="calendar-cell empty"></div>
-      );
-    }
-
-    return days;
+  // "today" 버튼 클릭 시 현재 월로 이동
+  const handleToday = () => {
+    setCurrentDate(new Date());
   };
 
-  const weekDays = [
-    { name: "일", className: "sunday" },
-    { name: "월", className: "monday" },
-    { name: "화", className: "tuesday" },
-    { name: "수", className: "wednesday" },
-    { name: "목", className: "thursday" },
-    { name: "금", className: "friday" },
-    { name: "토", className: "saturday" },
-  ];
-
   return (
-    <>
-      <div className="main-layout">
-        <div className="title-nav">
-          <div className="title">
-            {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
-          </div>
-          <div className="nav-buttons">
-            <button className="button button--primary" onClick={goToPreviousMonth}>
-              이전
-            </button>
-            <button className="button button--primary" onClick={goToNextMonth}>
-              다음
-            </button>
-          </div>
+    <div className="main-page">
+      <div className="header">
+        <div className="month-text">
+          {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
         </div>
-        <div className="calendar-section">
-          <div className="calendar-header">
-            {weekDays.map((day, index) => (
-              <div
-                key={index}
-                className={`calendar-header-cell ${day.className}`}
-                aria-label={day.name}
-              >
-                {day.name}
-              </div>
-            ))}
-          </div>
-          <div className="calendar-grid">{renderCalendar()}</div>
+        <div className="navigation-buttons">
+          <button className="nav-button" onClick={handlePrevMonth}>
+            {"<"}
+          </button>
+          <button className="today-button" onClick={handleToday}>
+            today
+          </button>
+          <button className="nav-button" onClick={handleNextMonth}>
+            {">"}
+          </button>
         </div>
       </div>
-      <div>
-        
+      <div className="calendar-container">
+        {/* 요일 */}
+        <div className="calendar-days">
+          {["일", "월", "화", "수", "목", "금", "토"].map((day) => (
+            <div className="day-box" key={day}>
+              {day}
+            </div>
+          ))}
+        </div>
+        {/* 날짜 */}
+        <div className="calendar-dates">
+          {/* 이전 월 날짜 */}
+          {prevMonthDays.map((day, index) => (
+            <div className="date-box next-month" key={`prev-${index}`}>
+              <div className="date-number">{day}</div>
+            </div>
+          ))}
+          {/* 현재 월 날짜 */}
+          {currentMonthDays.map((day) => (
+            <div
+              className={`date-box ${
+                day === currentDate.getDate() &&
+                currentDate.getMonth() === new Date().getMonth() &&
+                currentDate.getFullYear() === new Date().getFullYear()
+                  ? "highlighted-date"
+                  : ""
+              }`}
+              key={day}
+            >
+              <div className="date-number">{day}</div>
+              <div className="event-box">일정 예시</div>
+            </div>
+          ))}
+          {/* 다음 월 날짜 */}
+          {nextMonthDays.map((day, index) => (
+            <div className="date-box next-month" key={`next-${index}`}>
+              <div className="date-number">{day}</div>
+            </div>
+          ))}
+        </div>
       </div>
-    </>
+    </div>
   );
-};
+}
 
 export default MainPage;
