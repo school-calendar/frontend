@@ -1,166 +1,102 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./style/MainPage.css";
 
 function MainPage() {
-  // 상태 관리
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [showTodayInfo, setShowTodayInfo] = useState(false); // today 정보 상태 추가
-  const [selectedDate, setSelectedDate] = useState(null); // 클릭된 날짜 상태
-  const [events, setEvents] = useState({}); // 날짜별 일정 저장
+  const [events, setEvents] = useState([]);
+  const [schoolEvents, setSchoolEvents] = useState([]);
+  const userId = localStorage.getItem("user_id"); // 로그인 시 저장된 user_id 가져오기
+  const username = localStorage.getItem("username"); // 사용자 이름 저장 (필요 시)
 
-  const getCalendarDays = (date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-
-    const startDayOfWeek = firstDay.getDay();
-    const prevMonthLastDay = new Date(year, month, 0).getDate();
-    const prevMonthDays = Array.from(
-      { length: startDayOfWeek },
-      (_, i) => prevMonthLastDay - startDayOfWeek + i + 1
-    );
-
-    const currentMonthDays = Array.from(
-      { length: lastDay.getDate() },
-      (_, i) => i + 1
-    );
-
-    const endDayOfWeek = lastDay.getDay();
-    const nextMonthDays = Array.from(
-      { length: 6 - endDayOfWeek },
-      (_, i) => i + 1
-    );
-
-    return {
-      prevMonthDays,
-      currentMonthDays,
-      nextMonthDays,
-    };
+  // 학사 일정 가져오기
+  const getSchoolEvents = async () => {
+    console.log("Fetching school events for:", { username, year: currentDate.getFullYear() }); // 디버깅 정보
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/calendar/school?username=${username}&year=${currentDate.getFullYear()}`
+      );
+      console.log("School events fetched:", response.data); // 서버 응답 확인
+      setSchoolEvents(response.data);
+    } catch (error) {
+      console.error("Failed to fetch school events:", error.response?.data || error.message);
+      alert("Failed to load school calendar data.");
+    }
   };
 
-  const { prevMonthDays, currentMonthDays, nextMonthDays } =
-    getCalendarDays(currentDate);
-
-  const handlePrevMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
-    );
-    setShowTodayInfo(false);
-    setSelectedDate(null);
+  // 사용자 일정 가져오기
+  const getUserEvents = async () => {
+    console.log("Fetching user events for user_id:", userId); // 디버깅 정보
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/calendar/${userId}`);
+      console.log("User events fetched:", response.data); // 서버 응답 확인
+      setEvents(response.data);
+    } catch (error) {
+      console.error("Failed to fetch user events:", error.response?.data || error.message);
+      alert("Failed to load user calendar data.");
+    }
   };
 
-  const handleNextMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
-    );
-    setShowTodayInfo(false);
-    setSelectedDate(null);
-  };
+  useEffect(() => {
+    if (userId) {
+      getSchoolEvents(); // 학사 일정 가져오기
+      getUserEvents(); // 사용자 일정 가져오기
+    } else {
+      alert("Please sign in first!");
+      window.location.href = "/"; // 로그인하지 않았다면 로그인 페이지로 이동
+    }
+  }, [currentDate]); // 현재 날짜 변경 시 데이터 갱신
 
-  const handleToday = () => {
-    setCurrentDate(new Date());
-    setShowTodayInfo(true); // today 정보 표시
-    setSelectedDate(null);
-  };
+  // 캘린더 데이터를 날짜별로 정렬
+  const mergedEvents = [...schoolEvents, ...events].sort((a, b) =>
+    new Date(a.date) - new Date(b.date)
+  );
 
-  const handleDateClick = (day) => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    const clickedDate = new Date(year, month, day);
-    setSelectedDate(clickedDate);
-    setShowTodayInfo(false);
-  };
-
-  const handleSaveEvent = (eventText) => {
-    if (!selectedDate) return;
-    const dateKey = selectedDate.toISOString().split("T")[0];
-    setEvents((prevEvents) => ({
-      ...prevEvents,
-      [dateKey]: eventText,
-    }));
-    alert(`${dateKey} 일정이 저장되었습니다.`);
-  };
+  console.log("Merged events:", mergedEvents); // 병합된 일정 확인
 
   return (
-    <>
-        <div className="main-page">
+    <div className="main-page">
       <div className="header">
         <div className="month-text">
           {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
         </div>
         <div className="navigation-buttons">
-          <button className="nav-button" onClick={handlePrevMonth}>
+          <button
+            className="nav-button"
+            onClick={() =>
+              setCurrentDate(
+                new Date(currentDate.getFullYear(), currentDate.getMonth() - 1)
+              )
+            }
+          >
             {"<"}
           </button>
-          <button className="today-button" onClick={handleToday}>
-            today
+          <button className="today-button" onClick={() => setCurrentDate(new Date())}>
+            Today
           </button>
-          <button className="nav-button" onClick={handleNextMonth}>
+          <button
+            className="nav-button"
+            onClick={() =>
+              setCurrentDate(
+                new Date(currentDate.getFullYear(), currentDate.getMonth() + 1)
+              )
+            }
+          >
             {">"}
           </button>
         </div>
       </div>
-      <div className="sub-container">
-      <div className="content-container">
-        <div className="calendar-container">
-          <div className="calendar-days">
-            {["일", "월", "화", "수", "목", "금", "토"].map((day) => (
-              <div className="day-box" key={day}>
-                {day}
-              </div>
-            ))}
+      <div className="calendar-container">
+        {mergedEvents.map((event, index) => (
+          <div className="date-box" key={index}>
+            <div className="date-number">{event.date}</div>
+            <div className={`event-box ${event.school_schedule ? "school-event" : ""}`}>
+              {event.schedule}
+            </div>
           </div>
-          <div className="calendar-dates">
-            {prevMonthDays.map((day, index) => (
-              <div className="date-box next-month" key={`prev-${index}`}>
-                <div className="date-number">{day}</div>
-              </div>
-            ))}
-            {currentMonthDays.map((day) => {
-              const year = currentDate.getFullYear();
-              const month = currentDate.getMonth();
-              const dateKey = new Date(year, month, day)
-                .toISOString()
-                .split("T")[0];
-              return (
-                <div
-                  className={`date-box ${
-                    day === currentDate.getDate() &&
-                    currentDate.getMonth() === new Date().getMonth() &&
-                    currentDate.getFullYear() === new Date().getFullYear()
-                      ? "highlighted-date"
-                      : ""
-                  }`}
-                  key={day}
-                  onClick={() => handleDateClick(day)}
-                >
-                  <div className="date-number">{day}</div>
-                  {events[dateKey] && <div className="event-box">일정</div>}
-                </div>
-              );
-            })}
-            {nextMonthDays.map((day, index) => (
-              <div className="date-box next-month" key={`next-${index}`}>
-                <div className="date-number">{day}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      {selectedDate && (
-          <div className="event-editor">
-            <h3>{selectedDate.toLocaleDateString()}의 일정 추가</h3>
-            <textarea
-              className="event-input"
-              placeholder="일정을 입력하세요..."
-              onBlur={(e) => handleSaveEvent(e.target.value)}
-            ></textarea>
-          </div>
-        )}
+        ))}
       </div>
     </div>
-    </>
   );
 }
 
