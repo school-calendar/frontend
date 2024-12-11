@@ -1,13 +1,30 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-// import jwt_decode from "jwt-decode";
 import "./style/LoginPage.css";
 
 function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
+  // JWT 디코드 함수
+  const decodeToken = (token) => {
+    try {
+      const base64Url = token.split(".")[1]; // JWT의 payload 부분
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+          .join("")
+      );
+      return JSON.parse(jsonPayload);
+    } catch (error) {
+      console.error("Failed to decode token:", error);
+      return null;
+    }
+  };
 
   const handleLogin = async () => {
     console.log("Entered credentials:", { username, password }); // 입력된 값 확인
@@ -26,11 +43,11 @@ function LoginPage() {
       console.log("JWT Token:", response.data); // 서버에서 반환된 JWT 토큰 출력
 
       // JWT 디코딩
-      const decodedToken = jwt_decode(response.data);
+      const decodedToken = decodeToken(response.data);
       console.log("Decoded JWT token:", decodedToken);
 
       // user_id 추출
-      const userId = decodedToken.sub; // JWT payload에서 sub로 user_id 전달
+      const userId = decodedToken?.sub; // JWT payload에서 sub로 user_id 전달
       if (!userId) {
         console.error("JWT does not contain user_id!");
         alert("Invalid token received from server.");

@@ -6,53 +6,83 @@ function MainPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState([]);
   const [schoolEvents, setSchoolEvents] = useState([]);
-  const userId = localStorage.getItem("user_id"); // 로그인 시 저장된 user_id 가져오기
-  const username = localStorage.getItem("username"); // 사용자 이름 저장 (필요 시)
+  const userId = localStorage.getItem("user_id");
+  const username = localStorage.getItem("username");
 
-  // 학사 일정 가져오기
   const getSchoolEvents = async () => {
-    console.log("Fetching school events for:", { username, year: currentDate.getFullYear() }); // 디버깅 정보
     try {
       const response = await axios.get(
         `http://127.0.0.1:8000/calendar/school?username=${username}&year=${currentDate.getFullYear()}`
       );
-      console.log("School events fetched:", response.data); // 서버 응답 확인
       setSchoolEvents(response.data);
     } catch (error) {
       console.error("Failed to fetch school events:", error.response?.data || error.message);
-      alert("Failed to load school calendar data.");
     }
   };
 
-  // 사용자 일정 가져오기
   const getUserEvents = async () => {
-    console.log("Fetching user events for user_id:", userId); // 디버깅 정보
     try {
       const response = await axios.get(`http://127.0.0.1:8000/calendar/${userId}`);
-      console.log("User events fetched:", response.data); // 서버 응답 확인
       setEvents(response.data);
     } catch (error) {
       console.error("Failed to fetch user events:", error.response?.data || error.message);
-      alert("Failed to load user calendar data.");
     }
   };
 
   useEffect(() => {
     if (userId) {
-      getSchoolEvents(); // 학사 일정 가져오기
-      getUserEvents(); // 사용자 일정 가져오기
+      getSchoolEvents();
+      getUserEvents();
     } else {
       alert("Please sign in first!");
-      window.location.href = "/"; // 로그인하지 않았다면 로그인 페이지로 이동
+      window.location.href = "/";
     }
-  }, [currentDate]); // 현재 날짜 변경 시 데이터 갱신
+  }, [currentDate]);
 
-  // 캘린더 데이터를 날짜별로 정렬
-  const mergedEvents = [...schoolEvents, ...events].sort((a, b) =>
-    new Date(a.date) - new Date(b.date)
-  );
+  const getDaysInMonth = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const days = [];
+    const firstDay = new Date(year, month, 1).getDay();
 
-  console.log("Merged events:", mergedEvents); // 병합된 일정 확인
+    // 이전 달 날짜 추가
+    for (let i = firstDay - 1; i >= 0; i--) {
+      const prevDate = new Date(year, month, -i);
+      days.push(prevDate);
+    }
+
+    // 현재 달 날짜 추가
+    const totalDays = new Date(year, month + 1, 0).getDate();
+    for (let i = 1; i <= totalDays; i++) {
+      days.push(new Date(year, month, i));
+    }
+
+    // 다음 달 날짜 추가
+    const remainingDays = (7 - (days.length % 7)) % 7;
+    for (let i = 1; i <= remainingDays; i++) {
+      const nextDate = new Date(year, month + 1, i);
+      days.push(nextDate);
+    }
+
+    return days;
+  };
+
+  const days = getDaysInMonth(currentDate);
+
+  // 이벤트를 날짜별로 정리
+  const organizeEventsByDate = (events) => {
+    const eventMap = {};
+    events.forEach((event) => {
+      const dateKey = event.date; // 날짜를 키로 사용
+      if (!eventMap[dateKey]) {
+        eventMap[dateKey] = [];
+      }
+      eventMap[dateKey].push(event.schedule);
+    });
+    return eventMap;
+  };
+
+  const currentMonthEvents = organizeEventsByDate([...schoolEvents, ...events]);
 
   return (
     <div className="main-page">
@@ -87,14 +117,43 @@ function MainPage() {
         </div>
       </div>
       <div className="calendar-container">
-        {mergedEvents.map((event, index) => (
-          <div className="date-box" key={index}>
-            <div className="date-number">{event.date}</div>
-            <div className={`event-box ${event.school_schedule ? "school-event" : ""}`}>
-              {event.schedule}
+        <div className="calendar-days">
+          {["일", "월", "화", "수", "목", "금", "토"].map((day, index) => (
+            <div className="day-box" key={index}>
+              {day}
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+        <div className="calendar-dates">
+          {days.map((day, index) => {
+            const key = `${day.getFullYear()}-${day.getMonth() + 1}-${day.getDate()}`;
+            const dayEvents = currentMonthEvents[key] || [];
+
+            return (
+              <div
+                className={`date-box ${
+                  day.getMonth() !== currentDate.getMonth() ? "next-month" : ""
+                }`}
+                key={index}
+              >
+                <div className="date-number">{day.getDate()}</div>
+                {dayEvents.slice(0, 2).map((event, i) => (
+                  <div className="event-box" key={i}>
+                    {event}
+                  </div>
+                ))}
+                {dayEvents.length > 2 && (
+                  <div
+                    className="more-events"
+                    onClick={() => alert(`More events: ${dayEvents.join(", ")}`)}
+                  >
+                    ... more
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
