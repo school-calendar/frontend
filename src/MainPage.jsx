@@ -1,33 +1,58 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./style/MainPage.css";
-import api from "./utils/api";
 
 function MainPage() {
-<<<<<<< Updated upstream
-    
-
-  // 상태 관리
-  const [currentDate, setCurrentDate] = useState(new Date()); // 현재 날짜
-=======
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState([]);
+  const [schoolEvents, setSchoolEvents] = useState([]);
   const userId = localStorage.getItem("user_id"); // 로그인 시 저장된 user_id 가져오기
->>>>>>> Stashed changes
+  const username = localStorage.getItem("username"); // 사용자 이름 저장 (필요 시)
 
-  const getCalendarEvents = async () => {
+  // 학사 일정 가져오기
+  const getSchoolEvents = async () => {
+    console.log("Fetching school events for:", { username, year: currentDate.getFullYear() }); // 디버깅 정보
     try {
-      const response = await api.get(`/calendar/${userId}`);
-      setEvents(response.data); // 일정 데이터 설정
+      const response = await axios.get(
+        `http://127.0.0.1:8000/calendar/school?username=${username}&year=${currentDate.getFullYear()}`
+      );
+      console.log("School events fetched:", response.data); // 서버 응답 확인
+      setSchoolEvents(response.data);
     } catch (error) {
-      console.error("Failed to fetch calendar events:", error);
+      console.error("Failed to fetch school events:", error.response?.data || error.message);
+      alert("Failed to load school calendar data.");
+    }
+  };
+
+  // 사용자 일정 가져오기
+  const getUserEvents = async () => {
+    console.log("Fetching user events for user_id:", userId); // 디버깅 정보
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/calendar/${userId}`);
+      console.log("User events fetched:", response.data); // 서버 응답 확인
+      setEvents(response.data);
+    } catch (error) {
+      console.error("Failed to fetch user events:", error.response?.data || error.message);
+      alert("Failed to load user calendar data.");
     }
   };
 
   useEffect(() => {
-    getCalendarEvents();
-  }, [currentDate]); // 현재 날짜 변경 시 이벤트 갱신
+    if (userId) {
+      getSchoolEvents(); // 학사 일정 가져오기
+      getUserEvents(); // 사용자 일정 가져오기
+    } else {
+      alert("Please sign in first!");
+      window.location.href = "/"; // 로그인하지 않았다면 로그인 페이지로 이동
+    }
+  }, [currentDate]); // 현재 날짜 변경 시 데이터 갱신
 
-  // 캘린더 날짜 계산 (기존 로직 재사용)
+  // 캘린더 데이터를 날짜별로 정렬
+  const mergedEvents = [...schoolEvents, ...events].sort((a, b) =>
+    new Date(a.date) - new Date(b.date)
+  );
+
+  console.log("Merged events:", mergedEvents); // 병합된 일정 확인
 
   return (
     <div className="main-page">
@@ -47,7 +72,7 @@ function MainPage() {
             {"<"}
           </button>
           <button className="today-button" onClick={() => setCurrentDate(new Date())}>
-            today
+            Today
           </button>
           <button
             className="nav-button"
@@ -62,11 +87,12 @@ function MainPage() {
         </div>
       </div>
       <div className="calendar-container">
-        {/* 캘린더 그리드 표시 */}
-        {events.map((event) => (
-          <div className="date-box" key={event.id}>
+        {mergedEvents.map((event, index) => (
+          <div className="date-box" key={index}>
             <div className="date-number">{event.date}</div>
-            <div className="event-box">{event.schedule}</div>
+            <div className={`event-box ${event.school_schedule ? "school-event" : ""}`}>
+              {event.schedule}
+            </div>
           </div>
         ))}
       </div>
