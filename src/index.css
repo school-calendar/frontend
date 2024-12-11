@@ -7,13 +7,13 @@
 
 /* 전역 폰트 및 레이아웃 설정 */
 html, body, #root {
-  height: 100%;
+  height: 100vh;
   width: 100%;
   font-family: 'Pretendard', sans-serif;
 }
 
 /* CSS 변수 정의 */
 :root {
-  --primary-dark: #F57C00; /* 주요 색상 */
+  --primary-dark: #ff8a16; /* 주요 색상 */
   --subtitle-color: #CACACA; /* 서브타이틀 색상 */
 }

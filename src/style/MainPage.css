@@ -8,6 +8,7 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  max-width: 1400px;
 }
 
 /* 상단 텍스트와 버튼 컨테이너 */
@@ -17,7 +18,8 @@
   align-items: center;
   width: 100%; /* 전체 너비 */
   padding: 10px 30px; /* 상단 패딩 */
-  background-color: #212121; /* 상단 배경 색상 */
+  padding-top: 30px;
+  background-color: #282828; /* 상단 배경 색상 */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 약간의 그림자 효과 */
 }
 
@@ -72,10 +74,11 @@
   align-items: center;
   flex-grow: 1; /* 남은 공간을 캘린더가 차지 */
   width: 100%;
-  max-width: 1400px; /* 캘린더 너비 */
-  margin: auto;
+  max-width: 1400px; 
+  /* margin: auto; */
   padding: 20px;
   box-sizing: border-box;
+  background-color: #282828;
 }
 
 /* 요일 스타일 */
@@ -84,7 +87,7 @@
   grid-template-columns: repeat(7, 1fr); /* 7열 */
   width: 100%;
   margin-bottom: 10px; /* 간격 */
-  gap: 5px; /* 요일 간 간격 줄임 */
+  gap: 0.8em; /* 요일 간 간격 줄임 */
 }
 
 .day-box {
@@ -92,9 +95,10 @@
   align-items: flex-start; /* 텍스트 상단 정렬 */
   font-size: 1.4rem; /* 글꼴 크기 줄임 */
   padding: 5px 10px; /* 높이 줄임 */
-  background-color: #2a2a2a; /* 요일 배경 색상 */
+  background-color: #313133; /* 요일 배경 색상 */
   border-radius: 5px;
-  color: #aaaaaa;
+  color: #EDEDED;
+  font-weight: 600;
   text-align: left; /* 왼쪽 정렬 */
 }
 
@@ -103,7 +107,7 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr); /* 7열 */
   width: 100%;
-  gap: 20px; /* 날짜 간 간격 */
+  gap: 0.8em; /* 날짜 간 간격 */
 }
 
 .date-box {
@@ -112,7 +116,7 @@
   align-items: flex-start; /* 텍스트 왼쪽 정렬 */
   justify-content: flex-start;
   padding: 20px 15px; /* 높이 증가 */
-  background-color: #212121;
+  background-color: #313133;
   border-radius: 10px;
   transition: background-color 0.3s;
   height: 165px; /* 날짜 박스 높이 증가 */
@@ -130,18 +134,19 @@
 
 .event-box {
   font-size: 1rem; /* 일정 텍스트 크기 */
-  color: var(--primary-dark);
-  background-color: #1c1c1c;
-  padding: 5px 8px;
-  border-radius: 5px;
-  width: 100%; /* 일정 박스 너비 */
-  text-align: left; /* 텍스트 왼쪽 정렬 */
+  color: #313133;
+  background-color: #ff8a16;
+  padding: 8px 5px;
+  border-radius: 2px;
+  font-weight: 600;
+  width: 100%; 
+  /* text-align: left;  */
 }
 
 /* 특정 날짜 강조 */
 .highlighted-date {
-  background-color: var(--primary-dark);
-  color: #000000;
+  /* background-color: #313133; */
+  border: 2px solid #ff8a16;
 }
 
 /* 다음 달 날짜 스타일 */

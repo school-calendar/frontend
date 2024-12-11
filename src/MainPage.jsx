@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import "./style/MainPage.css";
 
 function MainPage() {
+  
+
   // 상태 관리
   const [currentDate, setCurrentDate] = useState(new Date()); // 현재 날짜
 
