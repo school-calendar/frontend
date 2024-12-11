@@ -96,7 +96,7 @@
   font-size: 1.4rem; /* 글꼴 크기 줄임 */
   padding: 5px 10px; /* 높이 줄임 */
   background-color: #313133; /* 요일 배경 색상 */
-  border-radius: 5px;
+  border-radius: 2px;
   color: #EDEDED;
   font-weight: 600;
   text-align: left; /* 왼쪽 정렬 */
@@ -120,6 +120,7 @@
   border-radius: 10px;
   transition: background-color 0.3s;
   height: 165px; /* 날짜 박스 높이 증가 */
+  border-radius: 2px;
 }
 
 .date-box:hover {
