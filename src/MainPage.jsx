@@ -1,161 +1,166 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import "./style/MainPage.css";
 
 function MainPage() {
+  // 상태 관리
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [events, setEvents] = useState([]);
-  const [schoolEvents, setSchoolEvents] = useState([]);
-  const userId = localStorage.getItem("user_id");
-  const username = localStorage.getItem("username");
+  const [showTodayInfo, setShowTodayInfo] = useState(false); // today 정보 상태 추가
+  const [selectedDate, setSelectedDate] = useState(null); // 클릭된 날짜 상태
+  const [events, setEvents] = useState({}); // 날짜별 일정 저장
 
-  const getSchoolEvents = async () => {
-    try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/calendar/school?username=${username}&year=${currentDate.getFullYear()}`
-      );
-      setSchoolEvents(response.data);
-    } catch (error) {
-      console.error("Failed to fetch school events:", error.response?.data || error.message);
-    }
-  };
-
-  const getUserEvents = async () => {
-    try {
-      const response = await axios.get(`http://127.0.0.1:8000/calendar/${userId}`);
-      setEvents(response.data);
-    } catch (error) {
-      console.error("Failed to fetch user events:", error.response?.data || error.message);
-    }
-  };
-
-  useEffect(() => {
-    if (userId) {
-      getSchoolEvents();
-      getUserEvents();
-    } else {
-      alert("Please sign in first!");
-      window.location.href = "/";
-    }
-  }, [currentDate]);
-
-  const getDaysInMonth = (date) => {
+  const getCalendarDays = (date) => {
     const year = date.getFullYear();
     const month = date.getMonth();
-    const days = [];
-    const firstDay = new Date(year, month, 1).getDay();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
 
-    // 이전 달 날짜 추가
-    for (let i = firstDay - 1; i >= 0; i--) {
-      const prevDate = new Date(year, month, -i);
-      days.push(prevDate);
-    }
+    const startDayOfWeek = firstDay.getDay();
+    const prevMonthLastDay = new Date(year, month, 0).getDate();
+    const prevMonthDays = Array.from(
+      { length: startDayOfWeek },
+      (_, i) => prevMonthLastDay - startDayOfWeek + i + 1
+    );
 
-    // 현재 달 날짜 추가
-    const totalDays = new Date(year, month + 1, 0).getDate();
-    for (let i = 1; i <= totalDays; i++) {
-      days.push(new Date(year, month, i));
-    }
+    const currentMonthDays = Array.from(
+      { length: lastDay.getDate() },
+      (_, i) => i + 1
+    );
 
-    // 다음 달 날짜 추가
-    const remainingDays = (7 - (days.length % 7)) % 7;
-    for (let i = 1; i <= remainingDays; i++) {
-      const nextDate = new Date(year, month + 1, i);
-      days.push(nextDate);
-    }
+    const endDayOfWeek = lastDay.getDay();
+    const nextMonthDays = Array.from(
+      { length: 6 - endDayOfWeek },
+      (_, i) => i + 1
+    );
 
-    return days;
+    return {
+      prevMonthDays,
+      currentMonthDays,
+      nextMonthDays,
+    };
   };
 
-  const days = getDaysInMonth(currentDate);
+  const { prevMonthDays, currentMonthDays, nextMonthDays } =
+    getCalendarDays(currentDate);
 
-  // 이벤트를 날짜별로 정리
-  const organizeEventsByDate = (events) => {
-    const eventMap = {};
-    events.forEach((event) => {
-      const dateKey = event.date; // 날짜를 키로 사용
-      if (!eventMap[dateKey]) {
-        eventMap[dateKey] = [];
-      }
-      eventMap[dateKey].push(event.schedule);
-    });
-    return eventMap;
+  const handlePrevMonth = () => {
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
+    );
+    setShowTodayInfo(false);
+    setSelectedDate(null);
   };
 
-  const currentMonthEvents = organizeEventsByDate([...schoolEvents, ...events]);
+  const handleNextMonth = () => {
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
+    );
+    setShowTodayInfo(false);
+    setSelectedDate(null);
+  };
+
+  const handleToday = () => {
+    setCurrentDate(new Date());
+    setShowTodayInfo(true); // today 정보 표시
+    setSelectedDate(null);
+  };
+
+  const handleDateClick = (day) => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const clickedDate = new Date(year, month, day);
+    setSelectedDate(clickedDate);
+    setShowTodayInfo(false);
+  };
+
+  const handleSaveEvent = (eventText) => {
+    if (!selectedDate) return;
+    const dateKey = selectedDate.toISOString().split("T")[0];
+    setEvents((prevEvents) => ({
+      ...prevEvents,
+      [dateKey]: eventText,
+    }));
+    alert(`${dateKey} 일정이 저장되었습니다.`);
+  };
 
   return (
-    <div className="main-page">
+    <>
+        <div className="main-page">
       <div className="header">
         <div className="month-text">
           {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
         </div>
         <div className="navigation-buttons">
-          <button
-            className="nav-button"
-            onClick={() =>
-              setCurrentDate(
-                new Date(currentDate.getFullYear(), currentDate.getMonth() - 1)
-              )
-            }
-          >
+          <button className="nav-button" onClick={handlePrevMonth}>
             {"<"}
           </button>
-          <button className="today-button" onClick={() => setCurrentDate(new Date())}>
-            Today
+          <button className="today-button" onClick={handleToday}>
+            today
           </button>
-          <button
-            className="nav-button"
-            onClick={() =>
-              setCurrentDate(
-                new Date(currentDate.getFullYear(), currentDate.getMonth() + 1)
-              )
-            }
-          >
+          <button className="nav-button" onClick={handleNextMonth}>
             {">"}
           </button>
         </div>
       </div>
-      <div className="calendar-container">
-        <div className="calendar-days">
-          {["일", "월", "화", "수", "목", "금", "토"].map((day, index) => (
-            <div className="day-box" key={index}>
-              {day}
-            </div>
-          ))}
-        </div>
-        <div className="calendar-dates">
-          {days.map((day, index) => {
-            const key = `${day.getFullYear()}-${day.getMonth() + 1}-${day.getDate()}`;
-            const dayEvents = currentMonthEvents[key] || [];
-
-            return (
-              <div
-                className={`date-box ${
-                  day.getMonth() !== currentDate.getMonth() ? "next-month" : ""
-                }`}
-                key={index}
-              >
-                <div className="date-number">{day.getDate()}</div>
-                {dayEvents.slice(0, 2).map((event, i) => (
-                  <div className="event-box" key={i}>
-                    {event}
-                  </div>
-                ))}
-                {dayEvents.length > 2 && (
-                  <div
-                    className="more-events"
-                    onClick={() => alert(`More events: ${dayEvents.join(", ")}`)}
-                  >
-                    ... more
-                  </div>
-                )}
+      <div className="sub-container">
+      <div className="content-container">
+        <div className="calendar-container">
+          <div className="calendar-days">
+            {["일", "월", "화", "수", "목", "금", "토"].map((day) => (
+              <div className="day-box" key={day}>
+                {day}
               </div>
-            );
-          })}
+            ))}
+          </div>
+          <div className="calendar-dates">
+            {prevMonthDays.map((day, index) => (
+              <div className="date-box next-month" key={`prev-${index}`}>
+                <div className="date-number">{day}</div>
+              </div>
+            ))}
+            {currentMonthDays.map((day) => {
+              const year = currentDate.getFullYear();
+              const month = currentDate.getMonth();
+              const dateKey = new Date(year, month, day)
+                .toISOString()
+                .split("T")[0];
+              return (
+                <div
+                  className={`date-box ${
+                    day === currentDate.getDate() &&
+                    currentDate.getMonth() === new Date().getMonth() &&
+                    currentDate.getFullYear() === new Date().getFullYear()
+                      ? "highlighted-date"
+                      : ""
+                  }`}
+                  key={day}
+                  onClick={() => handleDateClick(day)}
+                >
+                  <div className="date-number">{day}</div>
+                  {events[dateKey] && <div className="event-box">일정</div>}
+                </div>
+              );
+            })}
+            {nextMonthDays.map((day, index) => (
+              <div className="date-box next-month" key={`next-${index}`}>
+                <div className="date-number">{day}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
+      {selectedDate && (
+          <div className="event-editor">
+            <h3>{selectedDate.toLocaleDateString()}의 일정 추가</h3>
+            <textarea
+              className="event-input"
+              placeholder="일정을 입력하세요..."
+              onBlur={(e) => handleSaveEvent(e.target.value)}
+            ></textarea>
+          </div>
+        )}
+      </div>
     </div>
+    </>
   );
 }
 
